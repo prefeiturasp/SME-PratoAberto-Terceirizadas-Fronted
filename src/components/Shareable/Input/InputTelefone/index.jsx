@@ -8,7 +8,8 @@ class TelefoneOuCelular extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      ehCelular: false
+      ehCelular: false,
+      contato: null
     };
   }
 
@@ -49,6 +50,10 @@ class TelefoneOuCelular extends Component {
     }
   }
 
+  setaContato = valor => {
+    this.setState({ contato: valor });
+  };
+
   render() {
     const {
       setaContatosEmpresa,
@@ -88,17 +93,27 @@ class TelefoneOuCelular extends Component {
             "invalid-field"}`}
           guide={false}
           required={required}
-          onChange={event => {
-            cenario === "contatoEmpresa"
-              ? setaContatosEmpresa("telefone", event.target.value, indice)
-              : cenario === "contatoRepresentante"
-              ? setaContatoRepresentante(event.target.value, indice)
-              : setaContatosNutricionista(
-                  "telefone",
-                  event.target.value,
-                  indice
-                );
-          }}
+          onChange={
+            cenario !== "distribuidor"
+              ? event => {
+                  cenario === "contatoEmpresa"
+                    ? setaContatosEmpresa(
+                        "telefone",
+                        event.target.value,
+                        indice
+                      )
+                    : cenario === "contatoRepresentante"
+                    ? setaContatoRepresentante(event.target.value, indice)
+                    : // : cenario === "distribuidor"
+                      // ? this.setaContatoRepresentante(event.target.value, 0)
+                      setaContatosNutricionista(
+                        "telefone",
+                        event.target.value,
+                        indice
+                      );
+                }
+              : {}
+          }
         />
         <HelpText helpText={helpText} />
         <InputErroMensagem meta={meta} />

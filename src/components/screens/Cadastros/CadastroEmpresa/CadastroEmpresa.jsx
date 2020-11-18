@@ -1,5 +1,5 @@
 import HTTP_STATUS from "http-status-codes";
-import React, { Component } from "react";
+import React, { Component, Fragment } from "react";
 import { Link, Redirect } from "react-router-dom";
 import { Field, reduxForm, FormSection } from "redux-form";
 import { connect } from "react-redux";
@@ -20,6 +20,7 @@ import {
   fieldCnpj,
   fieldCep,
   formataJsonParaEnvio,
+  fieldCpf,
   validarSubmissao
 } from "./helper";
 import { toastSuccess, toastError } from "../../../Shareable/Toast/dialogs";
@@ -30,6 +31,7 @@ import { InputText } from "../../../Shareable/Input/InputText";
 import { loadEmpresa } from "../../../../reducers/empresa.reducer";
 import { ModalCadastroEmpresa } from "./components/ModalCadastroEmpresa";
 import { finalizarVinculoTerceirizadas } from "../../../../services/permissoes.service";
+import { getEnderecoPorCEP } from "../../../../services/cep.service";
 
 const ENTER = 13;
 class CadastroEmpresa extends Component {
@@ -46,7 +48,7 @@ class CadastroEmpresa extends Component {
       contatosEmpresaForm: ["contatoEmpresa_0"],
       contatosTerceirizadaForm: ["contatoTerceirizada_0"],
       editaisContratosForm: ["editalContrato_0"],
-
+      ehDistribuidor: false,
       contatosEmpresa: [
         {
           telefone: null,
@@ -68,7 +70,15 @@ class CadastroEmpresa extends Component {
         }
       ],
 
-      telefoneRepresentante: null
+      telefoneRepresentante: null,
+      dadosEndereco: {
+        request: null,
+        endereco: null,
+        bairro: null,
+        cidade: null,
+        estado: null,
+        desabilitado: true
+      }
     };
     this.setaContatosEmpresa = this.setaContatosEmpresa.bind(this);
     this.setaContatoRepresentante = this.setaContatoRepresentante.bind(this);
@@ -291,6 +301,20 @@ class CadastroEmpresa extends Component {
     this.props.change("representante_legal", data.representante_legal);
     this.props.change("email_representante_legal", data.representante_email);
     this.props.change("telefone_representante", data.representante_telefone);
+    this.props.change("bairro", data.bairro);
+    this.props.change("cidade", data.cidade);
+    this.props.change("estado", data.estado);
+    this.props.change("numero", data.numero);
+    this.props.change("complemento", data.complemento);
+    this.props.change("eh_distribuidor", data.eh_distribuidor);
+    if (data.eh_distribuidor) {
+      this.setState({ ehDistribuidor: true });
+    }
+    this.props.change("responsavel_nome", data.responsavel_nome);
+    this.props.change("responsavel_email", data.responsavel_email);
+    this.props.change("responsavel_cpf", data.responsavel_cpf);
+    this.props.change("responsavel_telefone", data.responsavel_telefone);
+    this.props.change("responsavel_cargo", data.responsavel_cargo);
     this.atribuiContatosEmpresaForm(data.contatos);
     this.atribuiNutricionistaEmpresaForm(data.nutricionistas);
   }
@@ -309,8 +333,25 @@ class CadastroEmpresa extends Component {
     });
   }
 
+  inciaFormEndereco = () => {
+    const { dadosEndereco } = this.state;
+    const { change } = this.props;
+    if (dadosEndereco.request !== null) {
+      if (dadosEndereco.request) {
+        change("endereco", dadosEndereco.endereco);
+        change("bairro", dadosEndereco.bairro);
+        change("cidade", dadosEndereco.cidade);
+        change("estado", dadosEndereco.estado);
+      } else {
+        dadosEndereco.desabilitado = false;
+        this.setState({ dadosEndereco });
+      }
+    }
+  };
+
   componentDidUpdate(prevProps, prevState) {
     let lotes = this.state.lotes;
+    this.inciaFormEndereco();
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
     if (lotes !== prevState.lotes) {
@@ -426,6 +467,41 @@ class CadastroEmpresa extends Component {
     }
   }
 
+  onCheckClicked() {
+    const { ehDistribuidor } = this.state;
+    this.props.change("eh_distribuidor", !ehDistribuidor);
+    this.setState({ ehDistribuidor: !ehDistribuidor });
+  }
+
+  buscaCep = async value => {
+    const { dadosEndereco } = this.state;
+    if (value.length === 9) {
+      const response = await getEnderecoPorCEP(value);
+      if (response.data.resultado_txt === "sucesso - cep completo") {
+        const { data } = response;
+        dadosEndereco.desabilitado = true;
+        dadosEndereco.bairro = data.bairro;
+        dadosEndereco.cidade = data.cidade;
+        dadosEndereco.endereco = `${data.tipo_logradouro} ${data.logradouro}`;
+        dadosEndereco.estado = data.uf;
+        dadosEndereco.request = true;
+      } else {
+        dadosEndereco.desabilitado = false;
+        dadosEndereco.bairro = null;
+        dadosEndereco.cidade = null;
+        dadosEndereco.endereco = null;
+        dadosEndereco.estado = null;
+      }
+    } else {
+      dadosEndereco.desabilitado = true;
+      dadosEndereco.bairro = null;
+      dadosEndereco.cidade = null;
+      dadosEndereco.endereco = null;
+      dadosEndereco.estado = null;
+    }
+    this.setState({ dadosEndereco });
+  };
+
   render() {
     const { handleSubmit } = this.props;
     const {
@@ -438,7 +514,9 @@ class CadastroEmpresa extends Component {
       uuid,
       valoresForm,
       exibirModal,
-      tituloModal
+      tituloModal,
+      ehDistribuidor,
+      dadosEndereco
     } = this.state;
     return (
       <div className="cadastro pt-3">
@@ -458,13 +536,31 @@ class CadastroEmpresa extends Component {
                   Dados da Empresa
                 </div>
                 <div className="row pt-3">
-                  <div className="col-12">
+                  <div className="col-8">
                     <Link to="/configuracoes/cadastros/empresas-cadastradas">
                       <Botao
                         texto="Consulta de empresas cadastradas"
                         style={BUTTON_STYLE.BLUE_OUTLINE}
                       />
                     </Link>
+                  </div>
+
+                  <div className="col-4 td-check">
+                    {uuid === null && (
+                      <label htmlFor="check" className="checkbox-label">
+                        <Field
+                          component={"input"}
+                          type="checkbox"
+                          name="eh_distribuidor"
+                          data-cy="checkbox-lista-igual"
+                        />
+                        <span
+                          onClick={() => this.onCheckClicked()}
+                          className="checkbox-custom"
+                        />{" "}
+                        Distribuidor
+                      </label>
+                    )}
                   </div>
                 </div>
                 <div className="row pt-3">
@@ -501,15 +597,6 @@ class CadastroEmpresa extends Component {
                 </div>
 
                 <div className="row pt-3">
-                  <div className="col-9">
-                    <Field
-                      component={InputText}
-                      label="Endereço"
-                      name="endereco"
-                      validate={required}
-                      required
-                    />
-                  </div>
                   <div className="col-3">
                     <Field
                       {...fieldCep}
@@ -518,228 +605,109 @@ class CadastroEmpresa extends Component {
                       name="cep"
                       required
                       validate={required}
+                      onChange={event => this.buscaCep(event.target.value)}
+                    />
+                  </div>
+                  <div className="col-6">
+                    <Field
+                      component={InputText}
+                      label="Endereço"
+                      name="endereco"
+                      validate={required}
+                      required
+                      disabled={dadosEndereco.desabilitado}
+                    />
+                  </div>
+
+                  <div className="col-3">
+                    <Field
+                      component={InputText}
+                      label="Complemento"
+                      name="complemento"
                     />
                   </div>
                 </div>
 
-                <div className="container-fields row">
-                  <div className="col-11">
-                    {contatosEmpresaForm.map(
-                      (contatoEmpresa, indiceEmpresa) => {
-                        return (
-                          <FormSection
-                            nomeForm={`contatoEmpresa_${indiceEmpresa}`}
-                            name={contatoEmpresa}
-                            key={indiceEmpresa}
-                          >
-                            <div className="fields-set">
-                              <div>
-                                <Field
-                                  name={`telefone_empresa_${indiceEmpresa}`}
-                                  component={TelefoneOuCelular}
-                                  label="Telefone"
-                                  id={`telefone_empresa_${indiceEmpresa}`}
-                                  setaContatosEmpresa={this.setaContatosEmpresa}
-                                  indice={indiceEmpresa}
-                                  cenario="contatoEmpresa"
-                                  validate={required}
-                                  required
-                                />
-                              </div>
-                              <div>
-                                <Field
-                                  name={`email_empresa_${indiceEmpresa}`}
-                                  component={InputText}
-                                  label="E-mail"
-                                  required
-                                  validate={required}
-                                  onChange={event =>
-                                    this.setaContatosEmpresa(
-                                      "email",
-                                      event.target.value,
-                                      indiceEmpresa
-                                    )
-                                  }
-                                />
-                              </div>
-                            </div>
-                          </FormSection>
-                        );
-                      }
-                    )}
-                  </div>
-                  <div className={`col-1 mt-auto mb-1`}>
-                    <Botao
-                      texto="+"
-                      type={BUTTON_TYPE.BUTTON}
-                      style={BUTTON_STYLE.BLUE_OUTLINE}
-                      onClick={() => {
-                        this.nomeFormContatoEmpresa();
-                        this.adicionaContatoEmpresa();
-                      }}
+                <div className="row pt-3">
+                  <div className="col-3">
+                    <Field
+                      component={InputText}
+                      label="Bairro"
+                      name="bairro"
+                      required
+                      validate={required}
+                      disabled={dadosEndereco.desabilitado}
                     />
                   </div>
-                </div>
-              </div>
-
-              <hr className="linha-form" />
-
-              <div>
-                <div className="card-body">
-                  <div className="row">
-                    <div className="col-7">
-                      <Field
-                        component={InputText}
-                        label="Representante Legal"
-                        name="representante_legal"
-                        required
-                        validate={required}
-                      />
-                    </div>
-                    <div className="col-5">
-                      <Field
-                        name={`telefone_representante`}
-                        label="Telefone"
-                        component={TelefoneOuCelular}
-                        id={`telefone_representante`}
-                        setaContatoRepresentante={this.setaContatoRepresentante}
-                        cenario="contatoRepresentante"
-                      />
-                    </div>
+                  <div className="col-3">
+                    <Field
+                      component={InputText}
+                      label="Cidade"
+                      name="cidade"
+                      validate={required}
+                      required
+                      disabled={dadosEndereco.desabilitado}
+                    />
                   </div>
-                  <div className="row pt-3">
-                    <div className="col-7">
-                      <Field
-                        component={InputText}
-                        label="E-mail"
-                        name="email_representante_legal"
-                        required
-                        validate={required}
-                      />
-                    </div>
+                  <div className="col-3">
+                    <Field
+                      component={InputText}
+                      label="Estado"
+                      name="estado"
+                      validate={required}
+                      required
+                      disabled={dadosEndereco.desabilitado}
+                    />
+                  </div>
+                  <div className="col-3">
+                    <Field component={InputText} label="Numero" name="numero" />
                   </div>
                 </div>
-              </div>
 
-              <hr className="linha-form" />
-
-              <div>
-                <div className="card-body">
-                  <div className="container-fields">
-                    <div className="fields">
-                      {contatosTerceirizadaForm.map(
-                        (contatoTerceirizada, indiceTerceirizada) => {
+                {ehDistribuidor ? (
+                  <div />
+                ) : (
+                  <div className="container-fields row">
+                    <div className="col-11">
+                      {contatosEmpresaForm.map(
+                        (contatoEmpresa, indiceEmpresa) => {
                           return (
                             <FormSection
-                              nomeForm={`contatoTerceirizada_${indiceTerceirizada}`}
-                              name={contatoTerceirizada}
-                              key={indiceTerceirizada}
+                              nomeForm={`contatoEmpresa_${indiceEmpresa}`}
+                              name={contatoEmpresa}
+                              key={indiceEmpresa}
                             >
-                              {indiceTerceirizada > 0 && <hr />}
-                              <div className="form-section-terceirizada">
-                                <div className="section-nutri-crn">
-                                  <div>
-                                    <Field
-                                      name={`nutricionista_nome_${indiceTerceirizada}`}
-                                      component={InputText}
-                                      label="Nutricionista Responsável Técnico"
-                                      required
-                                      validate={required}
-                                      onChange={event =>
-                                        this.setaContatosNutricionista(
-                                          "responsavel",
-                                          event.target.value,
-                                          indiceTerceirizada
-                                        )
-                                      }
-                                    />
-                                  </div>
-                                  <div>
-                                    <Field
-                                      name={`nutricionista_crn_${indiceTerceirizada}`}
-                                      label="CRN"
-                                      component={InputText}
-                                      onChange={event =>
-                                        this.setaContatosNutricionista(
-                                          "crn",
-                                          event.target.value,
-                                          indiceTerceirizada
-                                        )
-                                      }
-                                      required
-                                      validate={required}
-                                    />
-                                  </div>
-                                  {contatosNutricionista.length > 1 && (
-                                    <div className="trash">
-                                      <i
-                                        onClick={() =>
-                                          this.excluirNutricionista(
-                                            indiceTerceirizada
-                                          )
-                                        }
-                                        className="fas fa-trash"
-                                      />
-                                    </div>
-                                  )}
+                              <div className="fields-set">
+                                <div>
+                                  <Field
+                                    name={`telefone_empresa_${indiceEmpresa}`}
+                                    component={TelefoneOuCelular}
+                                    label="Telefone"
+                                    id={`telefone_empresa_${indiceEmpresa}`}
+                                    setaContatosEmpresa={
+                                      this.setaContatosEmpresa
+                                    }
+                                    indice={indiceEmpresa}
+                                    cenario="contatoEmpresa"
+                                    validate={required}
+                                    required
+                                  />
                                 </div>
-                                {contatosNutricionista.length > 1 && (
-                                  <div className="pt-2">
-                                    <label className="container-radio">
-                                      Principal administrador do sistema
-                                      <Field
-                                        component={"input"}
-                                        type="radio"
-                                        value={indiceTerceirizada.toString()}
-                                        data-cy="radio-5-7h"
-                                        name={"super_admin_terceirizadas"}
-                                        onChange={() =>
-                                          this.setAdminNutricionista(
-                                            indiceTerceirizada
-                                          )
-                                        }
-                                        checked={
-                                          contatosNutricionista[
-                                            indiceTerceirizada
-                                          ]["super_admin_terceirizadas"]
-                                        }
-                                      />
-                                      <span className="checkmark" />
-                                    </label>
-                                  </div>
-                                )}
-                                <div className="section-nutri-contato pt-2">
-                                  <div>
-                                    <Field
-                                      name={`telefone_terceirizada_${indiceTerceirizada}`}
-                                      component={TelefoneOuCelular}
-                                      label="Telefone/Celular Técnico"
-                                      id={`telefone_terceirizada_${indiceTerceirizada}`}
-                                      setaContatosNutricionista={
-                                        this.setaContatosNutricionista
-                                      }
-                                      indice={indiceTerceirizada}
-                                      required
-                                      validate={required}
-                                    />
-                                  </div>
-                                  <div>
-                                    <Field
-                                      name={`email_terceirizada_${indiceTerceirizada}`}
-                                      label="E-mail"
-                                      type={"email"}
-                                      component={InputText}
-                                      required
-                                      validate={required}
-                                      onChange={event =>
-                                        this.setaContatosNutricionista(
-                                          "email",
-                                          event.target.value,
-                                          indiceTerceirizada
-                                        )
-                                      }
-                                    />
-                                  </div>
+                                <div>
+                                  <Field
+                                    name={`email_empresa_${indiceEmpresa}`}
+                                    component={InputText}
+                                    label="E-mail"
+                                    required
+                                    validate={required}
+                                    onChange={event =>
+                                      this.setaContatosEmpresa(
+                                        "email",
+                                        event.target.value,
+                                        indiceEmpresa
+                                      )
+                                    }
+                                  />
                                 </div>
                               </div>
                             </FormSection>
@@ -753,107 +721,356 @@ class CadastroEmpresa extends Component {
                         type={BUTTON_TYPE.BUTTON}
                         style={BUTTON_STYLE.BLUE_OUTLINE}
                         onClick={() => {
-                          this.nomeFormContatoTerceirizada();
-                          this.adicionaContatoNutricionista();
+                          this.nomeFormContatoEmpresa();
+                          this.adicionaContatoEmpresa();
                         }}
                       />
                     </div>
                   </div>
-                </div>
+                )}
               </div>
 
               <hr className="linha-form" />
 
               <div>
                 <div className="card-body">
-                  <div className="row pt-3">
-                    <div className="col-12">
-                      <label className="label font-weight-normal pb-3">
-                        Lotes de atendimento
-                      </label>
-
-                      {this.state.lotes.length ? (
-                        <Field
-                          component={StatefulMultiSelect}
-                          name="lotes"
-                          selected={lotesSelecionados}
-                          options={lotes}
-                          valueRenderer={this.renderizarLabelLote}
-                          onSelectedChanged={value => {
-                            this.lidarComSelecionados(value);
-                          }}
-                          overrideStrings={{
-                            search: "Busca",
-                            selectSomeItems: "Selecione",
-                            allItemsAreSelected:
-                              "Todos os itens estão selecionados",
-                            selectAll: "Todos"
-                          }}
-                        />
-                      ) : (
-                        <div className="col-6">Carregando lotes..</div>
-                      )}
-                    </div>
-                    <div className="col-12">
-                      {lotesNomesSelecionados.length > 0 && (
-                        <div className="row pt-3">
-                          <div className="col-12">
-                            <label className="label-selected-unities">
-                              Lotes Selecionados
-                            </label>
-                            {lotesNomesSelecionados.map((lote, indice) => {
-                              return (
-                                <div
-                                  className="value-selected-unities"
-                                  key={indice}
-                                >
-                                  {lote}
-                                </div>
-                              );
-                            })}
-                          </div>
+                  {ehDistribuidor ? (
+                    <Fragment>
+                      <div className="row">
+                        <div className="col-7">
+                          <Field
+                            component={InputText}
+                            label="Responsavel nome"
+                            name="responsavel_nome"
+                            required
+                            validate={required}
+                          />
                         </div>
-                      )}
+                        <div className="col-5">
+                          <Field
+                            component={InputText}
+                            label="Responsavel email"
+                            name="responsavel_email"
+                            required
+                            validate={required}
+                          />
+                        </div>
+                      </div>
+                      <div className="row pt-3">
+                        <div className="col-4">
+                          <Field
+                            {...fieldCpf}
+                            component={InputText}
+                            label="Responsavel cpf"
+                            name="responsavel_cpf"
+                            required
+                            validate={required}
+                          />
+                        </div>
+                        <div className="col-4">
+                          <Field
+                            component={InputText}
+                            label="Responsavel cargo"
+                            name="responsavel_cargo"
+                            required
+                            validate={required}
+                          />
+                        </div>
+                        <div className="col-4">
+                          <Field
+                            component={TelefoneOuCelular}
+                            label="Responsavel telefone"
+                            name="responsavel_telefone"
+                            cenario="distribuidor"
+                            required
+                            validate={required}
+                          />
+                        </div>
+                      </div>
+                    </Fragment>
+                  ) : (
+                    <Fragment>
+                      <div className="row">
+                        <div className="col-7">
+                          <Field
+                            component={InputText}
+                            label="Representante Legal"
+                            name="representante_legal"
+                            required
+                            validate={required}
+                          />
+                        </div>
+                        <div className="col-5">
+                          <Field
+                            name={`telefone_representante`}
+                            label="Telefone"
+                            component={TelefoneOuCelular}
+                            id={`telefone_representante`}
+                            setaContatoRepresentante={
+                              this.setaContatoRepresentante
+                            }
+                            cenario="contatoRepresentante"
+                          />
+                        </div>
+                      </div>
+                      <div className="row pt-3">
+                        <div className="col-7">
+                          <Field
+                            component={InputText}
+                            label="E-mail"
+                            name="email_representante_legal"
+                            required
+                            validate={required}
+                          />
+                        </div>
+                      </div>
+                    </Fragment>
+                  )}
+                </div>
+              </div>
+
+              {ehDistribuidor ? (
+                <div />
+              ) : (
+                <div>
+                  <hr className="linha-form" />
+                  <div className="card-body">
+                    <div className="container-fields">
+                      <div className="fields">
+                        {contatosTerceirizadaForm.map(
+                          (contatoTerceirizada, indiceTerceirizada) => {
+                            return (
+                              <FormSection
+                                nomeForm={`contatoTerceirizada_${indiceTerceirizada}`}
+                                name={contatoTerceirizada}
+                                key={indiceTerceirizada}
+                              >
+                                {indiceTerceirizada > 0 && <hr />}
+                                <div className="form-section-terceirizada">
+                                  <div className="section-nutri-crn">
+                                    <div>
+                                      <Field
+                                        name={`nutricionista_nome_${indiceTerceirizada}`}
+                                        component={InputText}
+                                        label="Nutricionista Responsável Técnico"
+                                        required
+                                        validate={required}
+                                        onChange={event =>
+                                          this.setaContatosNutricionista(
+                                            "responsavel",
+                                            event.target.value,
+                                            indiceTerceirizada
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                    <div>
+                                      <Field
+                                        name={`nutricionista_crn_${indiceTerceirizada}`}
+                                        label="CRN"
+                                        component={InputText}
+                                        onChange={event =>
+                                          this.setaContatosNutricionista(
+                                            "crn",
+                                            event.target.value,
+                                            indiceTerceirizada
+                                          )
+                                        }
+                                        required
+                                        validate={required}
+                                      />
+                                    </div>
+                                    {contatosNutricionista.length > 1 && (
+                                      <div className="trash">
+                                        <i
+                                          onClick={() =>
+                                            this.excluirNutricionista(
+                                              indiceTerceirizada
+                                            )
+                                          }
+                                          className="fas fa-trash"
+                                        />
+                                      </div>
+                                    )}
+                                  </div>
+                                  {contatosNutricionista.length > 1 && (
+                                    <div className="pt-2">
+                                      <label className="container-radio">
+                                        Principal administrador do sistema
+                                        <Field
+                                          component={"input"}
+                                          type="radio"
+                                          value={indiceTerceirizada.toString()}
+                                          data-cy="radio-5-7h"
+                                          name={"super_admin_terceirizadas"}
+                                          onChange={() =>
+                                            this.setAdminNutricionista(
+                                              indiceTerceirizada
+                                            )
+                                          }
+                                          checked={
+                                            contatosNutricionista[
+                                              indiceTerceirizada
+                                            ]["super_admin_terceirizadas"]
+                                          }
+                                        />
+                                        <span className="checkmark" />
+                                      </label>
+                                    </div>
+                                  )}
+                                  <div className="section-nutri-contato pt-2">
+                                    <div>
+                                      <Field
+                                        name={`telefone_terceirizada_${indiceTerceirizada}`}
+                                        component={TelefoneOuCelular}
+                                        label="Telefone/Celular Técnico"
+                                        id={`telefone_terceirizada_${indiceTerceirizada}`}
+                                        setaContatosNutricionista={
+                                          this.setaContatosNutricionista
+                                        }
+                                        indice={indiceTerceirizada}
+                                        required
+                                        validate={required}
+                                      />
+                                    </div>
+                                    <div>
+                                      <Field
+                                        name={`email_terceirizada_${indiceTerceirizada}`}
+                                        label="E-mail"
+                                        type={"email"}
+                                        component={InputText}
+                                        required
+                                        validate={required}
+                                        onChange={event =>
+                                          this.setaContatosNutricionista(
+                                            "email",
+                                            event.target.value,
+                                            indiceTerceirizada
+                                          )
+                                        }
+                                      />
+                                    </div>
+                                  </div>
+                                </div>
+                              </FormSection>
+                            );
+                          }
+                        )}
+                      </div>
+                      <div className={`col-1 mt-auto mb-1`}>
+                        <Botao
+                          texto="+"
+                          type={BUTTON_TYPE.BUTTON}
+                          style={BUTTON_STYLE.BLUE_OUTLINE}
+                          onClick={() => {
+                            this.nomeFormContatoTerceirizada();
+                            this.adicionaContatoNutricionista();
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
+                </div>
+              )}
 
-                  <div className="row mt-5">
-                    {uuid === null ? (
-                      <div className="col-12 text-right">
-                        <Botao
-                          texto="Cancelar"
-                          onClick={event => this.resetForm(event)}
-                          type={BUTTON_TYPE.BUTTON}
-                          style={BUTTON_STYLE.GREEN_OUTLINE}
-                        />
-                        <Botao
-                          texto={"Salvar"}
-                          onClick={handleSubmit(values =>
-                            this.exibirModal({
-                              ...values
-                            })
+              {ehDistribuidor ? (
+                <div />
+              ) : (
+                <Fragment>
+                  <hr className="linha-form" />
+                  <div>
+                    <div className="card-body">
+                      <div className="row pt-3">
+                        <div className="col-12">
+                          <label className="label font-weight-normal pb-3">
+                            Lotes de atendimento
+                          </label>
+
+                          {this.state.lotes.length ? (
+                            <Field
+                              component={StatefulMultiSelect}
+                              name="lotes"
+                              selected={lotesSelecionados}
+                              options={lotes}
+                              valueRenderer={this.renderizarLabelLote}
+                              onSelectedChanged={value => {
+                                this.lidarComSelecionados(value);
+                              }}
+                              overrideStrings={{
+                                search: "Busca",
+                                selectSomeItems: "Selecione",
+                                allItemsAreSelected:
+                                  "Todos os itens estão selecionados",
+                                selectAll: "Todos"
+                              }}
+                            />
+                          ) : (
+                            <div className="col-6">Carregando lotes..</div>
                           )}
-                          className="ml-3"
-                          type={BUTTON_TYPE.SUBMIT}
-                          style={BUTTON_STYLE.GREEN}
-                        />
-                      </div>
-                    ) : (
-                      <div className="col-12 text-right">
-                        <Botao
-                          texto={"Atualizar"}
-                          onClick={handleSubmit(values =>
-                            this.exibirModal({
-                              ...values
-                            })
+                        </div>
+                        <div className="col-12">
+                          {lotesNomesSelecionados.length > 0 && (
+                            <div className="row pt-3">
+                              <div className="col-12">
+                                <label className="label-selected-unities">
+                                  Lotes Selecionados
+                                </label>
+                                {lotesNomesSelecionados.map((lote, indice) => {
+                                  return (
+                                    <div
+                                      className="value-selected-unities"
+                                      key={indice}
+                                    >
+                                      {lote}
+                                    </div>
+                                  );
+                                })}
+                              </div>
+                            </div>
                           )}
-                          className="ml-3"
-                          type={BUTTON_TYPE.SUBMIT}
-                          style={BUTTON_STYLE.GREEN}
-                        />
+                        </div>
                       </div>
-                    )}
+                    </div>
                   </div>
+                </Fragment>
+              )}
+              <div className="card-body ">
+                <div className="row mt-5">
+                  {uuid === null ? (
+                    <div className="col-12 text-right">
+                      <Botao
+                        texto="Cancelar"
+                        onClick={event => this.resetForm(event)}
+                        type={BUTTON_TYPE.BUTTON}
+                        style={BUTTON_STYLE.GREEN_OUTLINE}
+                      />
+                      <Botao
+                        texto={"Salvar"}
+                        onClick={handleSubmit(values =>
+                          this.exibirModal({
+                            ...values
+                          })
+                        )}
+                        className="ml-3"
+                        type={BUTTON_TYPE.SUBMIT}
+                        style={BUTTON_STYLE.GREEN}
+                      />
+                    </div>
+                  ) : (
+                    <div className="col-12 text-right">
+                      <Botao
+                        texto={"Atualizar"}
+                        onClick={handleSubmit(values =>
+                          this.exibirModal({
+                            ...values
+                          })
+                        )}
+                        className="ml-3"
+                        type={BUTTON_TYPE.SUBMIT}
+                        style={BUTTON_STYLE.GREEN}
+                      />
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
