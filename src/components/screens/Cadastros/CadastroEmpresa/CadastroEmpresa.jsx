@@ -351,6 +351,8 @@ class CadastroEmpresa extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     let lotes = this.state.lotes;
+    const { ehDistribuidor } = this.state;
+    this.props.change("eh_terceirizada", !ehDistribuidor);
     this.inciaFormEndereco();
     const urlParams = new URLSearchParams(window.location.search);
     const uuid = urlParams.get("uuid");
@@ -547,19 +549,34 @@ class CadastroEmpresa extends Component {
 
                   <div className="col-4 td-check">
                     {uuid === null && (
-                      <label htmlFor="check" className="checkbox-label">
-                        <Field
-                          component={"input"}
-                          type="checkbox"
-                          name="eh_distribuidor"
-                          data-cy="checkbox-lista-igual"
-                        />
-                        <span
-                          onClick={() => this.onCheckClicked()}
-                          className="checkbox-custom"
-                        />{" "}
-                        Distribuidor
-                      </label>
+                      <Fragment>
+                        <label htmlFor="check" className="checkbox-label">
+                          <Field
+                            component={"input"}
+                            type="checkbox"
+                            name="eh_distribuidor"
+                            data-cy="checkbox-lista-igual"
+                          />
+                          <span
+                            onClick={() => this.onCheckClicked()}
+                            className="checkbox-custom"
+                          />{" "}
+                          Distribuidor
+                        </label>
+                        <label htmlFor="check" className="checkbox-label ml-5">
+                          <Field
+                            component={"input"}
+                            type="checkbox"
+                            name="eh_terceirizada"
+                            data-cy="checkbox-lista-igual"
+                          />
+                          <span
+                            onClick={() => this.onCheckClicked()}
+                            className="checkbox-custom"
+                          />{" "}
+                          Terceirizada
+                        </label>
+                      </Fragment>
                     )}
                   </div>
                 </div>
@@ -569,6 +586,7 @@ class CadastroEmpresa extends Component {
                       component={InputText}
                       label="Razão social"
                       name="razao_social"
+                      maxlength="150"
                       required
                       validate={required}
                     />
@@ -592,6 +610,7 @@ class CadastroEmpresa extends Component {
                       name="nome_fantasia"
                       validate={required}
                       required
+                      maxlength="150"
                     />
                   </div>
                 </div>
@@ -616,6 +635,7 @@ class CadastroEmpresa extends Component {
                       validate={required}
                       required
                       disabled={dadosEndereco.desabilitado}
+                      maxlength="150"
                     />
                   </div>
 
@@ -624,6 +644,7 @@ class CadastroEmpresa extends Component {
                       component={InputText}
                       label="Complemento"
                       name="complemento"
+                      maxlength="45"
                     />
                   </div>
                 </div>
@@ -637,6 +658,7 @@ class CadastroEmpresa extends Component {
                       required
                       validate={required}
                       disabled={dadosEndereco.desabilitado}
+                      maxlength="140"
                     />
                   </div>
                   <div className="col-3">
@@ -647,6 +669,7 @@ class CadastroEmpresa extends Component {
                       validate={required}
                       required
                       disabled={dadosEndereco.desabilitado}
+                      maxlength="140"
                     />
                   </div>
                   <div className="col-3">
@@ -657,10 +680,16 @@ class CadastroEmpresa extends Component {
                       validate={required}
                       required
                       disabled={dadosEndereco.desabilitado}
+                      maxlength="140"
                     />
                   </div>
                   <div className="col-3">
-                    <Field component={InputText} label="Numero" name="numero" />
+                    <Field
+                      component={InputText}
+                      label="Numero"
+                      name="numero"
+                      maxlength="5"
+                    />
                   </div>
                 </div>
 
@@ -744,6 +773,7 @@ class CadastroEmpresa extends Component {
                             name="responsavel_nome"
                             required
                             validate={required}
+                            maxlength="150"
                           />
                         </div>
                         <div className="col-5">
@@ -751,8 +781,11 @@ class CadastroEmpresa extends Component {
                             component={InputText}
                             label="Responsavel email"
                             name="responsavel_email"
+                            placeholder="email@exemplo.com"
+                            type="email"
                             required
                             validate={required}
+                            maxlength="150"
                           />
                         </div>
                       </div>
@@ -774,6 +807,7 @@ class CadastroEmpresa extends Component {
                             name="responsavel_cargo"
                             required
                             validate={required}
+                            maxlength="40"
                           />
                         </div>
                         <div className="col-4">
@@ -798,6 +832,7 @@ class CadastroEmpresa extends Component {
                             name="representante_legal"
                             required
                             validate={required}
+                            maxlength="150"
                           />
                         </div>
                         <div className="col-5">
@@ -862,6 +897,7 @@ class CadastroEmpresa extends Component {
                                             indiceTerceirizada
                                           )
                                         }
+                                        maxlength="150"
                                       />
                                     </div>
                                     <div>
@@ -878,6 +914,7 @@ class CadastroEmpresa extends Component {
                                         }
                                         required
                                         validate={required}
+                                        maxlength="150"
                                       />
                                     </div>
                                     {contatosNutricionista.length > 1 && (
