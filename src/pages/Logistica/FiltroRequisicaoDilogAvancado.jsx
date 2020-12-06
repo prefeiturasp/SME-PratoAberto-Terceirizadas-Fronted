@@ -10,7 +10,7 @@ import FiltroRequisicaoDilogAvancado from "components/screens/Logistica/FiltroRe
 
 const atual = {
   href: `/${LOGISTICA}/${ENVIO_REQUISICOES_ENTREGA_AVANCADO}`,
-  titulo: "Envio de Requisições de Entrega"
+  titulo: "Consulta de Requisições de entrega"
 };
 
 const anteriores = [

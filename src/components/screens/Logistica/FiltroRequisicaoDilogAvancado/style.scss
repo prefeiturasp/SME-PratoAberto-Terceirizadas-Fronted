@@ -1,0 +1,51 @@
+header {
+  font-family: Roboto;
+  font-style: normal;
+  font-weight: bold;
+  font-size: 14px;
+  line-height: 16px;
+  /* identical to box height */
+
+  color: #42474a;
+}
+
+.formulario-busca {
+  margin-top: 1em;
+
+  .tres-colunas {
+    display: grid;
+    grid-template-columns: 1fr 1fr 2fr;
+    column-gap: 1%;
+    margin: 1em 0;
+  }
+
+  .duas-colunas {
+    display: grid;
+    grid-template-columns: 49% 49%;
+    column-gap: 2%;
+    margin: 1em 0;
+  }
+
+  .duas-colunas-custom {
+    display: grid;
+    grid-template-columns: 30% 68%;
+    column-gap: 2%;
+    margin: 1em 0;
+  }
+
+  .input-numeros {
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+  }
+
+  .label-formulario {
+    font-weight: 500 !important;
+    color: #686868 !important;
+    font-size: 14px;
+  }
+}
