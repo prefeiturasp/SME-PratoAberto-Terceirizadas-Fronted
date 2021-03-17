@@ -262,7 +262,6 @@ class WizardFormPrimeiraPagina extends React.Component {
               label="Nome dos componentes do produto"
               name="componentes"
               type="text"
-              placeholder="Digite o nome dos componentes"
               validate={[required, maxLength5000]}
               required
             />
