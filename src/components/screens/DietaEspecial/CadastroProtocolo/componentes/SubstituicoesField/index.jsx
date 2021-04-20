@@ -2,10 +2,7 @@ import React, { Component } from "react";
 import { Field } from "react-final-form";
 import { FieldArray } from "react-final-form-arrays";
 import Botao from "../../../../../Shareable/Botao";
-import {
-  BUTTON_STYLE,
-  BUTTON_ICON
-} from "../../../../../Shareable/Botao/constants";
+import { BUTTON_STYLE } from "../../../../../Shareable/Botao/constants";
 
 import Substituicao from "./SubstituicaoFinalForm";
 
@@ -48,7 +45,7 @@ export default class SubstituicoesField extends Component {
           <div className="col-2">
             <Botao
               texto="Adicionar"
-              onClick={() => form.mutators.push('substituicoes', {})}
+              onClick={() => form.mutators.push("substituicoes", {})}
               style={BUTTON_STYLE.GREEN}
             />
           </div>

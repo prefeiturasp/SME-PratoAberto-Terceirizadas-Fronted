@@ -44,7 +44,6 @@ export default class SubstituicoesField extends Component {
       chave,
       alimentos,
       produtos,
-      addOption,
       removeOption,
       input: { name },
       deveHabilitarApagar
@@ -73,7 +72,9 @@ export default class SubstituicoesField extends Component {
             <OnChange name={`${name}.alimento`}>
               {value => {
                 this.setState({
-                  valorSelecionado: alimentos.find(al => String(al.id) === value)
+                  valorSelecionado: alimentos.find(
+                    al => String(al.id) === value
+                  )
                 });
               }}
             </OnChange>
@@ -119,7 +120,8 @@ export default class SubstituicoesField extends Component {
                 onClick={() => deveHabilitarApagar && removeOption()}
                 style={BUTTON_STYLE.GREEN_OUTLINE}
               />
-            </div>)}
+            </div>
+          )}
         </div>
       </>
     );
