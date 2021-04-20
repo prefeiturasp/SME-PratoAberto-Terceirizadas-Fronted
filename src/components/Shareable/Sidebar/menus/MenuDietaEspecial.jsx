@@ -5,7 +5,8 @@ import {
   AVALIAR_SOLICITACAO_CADASTRO_PRODUTO,
   ACOMPANHAR_SOLICITACAO_CADASTRO_PRODUTO,
   DIETA_ESPECIAL,
-  CANCELAMENTO
+  CANCELAMENTO,
+  CADASTRO_PROTOCOLO_PADRAO
 } from "configs/constants";
 import {
   usuarioEhTerceirizada,
@@ -36,6 +37,7 @@ const MenuDietaEspecial = () => {
     usuarioEhCODAEDietaEspecial() || usuarioEhNutricionistaSupervisao();
   const exibeAvaliarSolicitacaoCadastroProduto = usuarioEhTerceirizada();
   const exibeAcompanharSolicitacaoCadastroProduto = usuarioEhCODAEDietaEspecial();
+  const exibeCadastroProtocoloPadrao = usuarioEhCODAEDietaEspecial();
 
   return (
     <Menu id="DietaEspecial" icon="fa-utensils" title={"Dieta Especial"}>
@@ -77,6 +79,11 @@ const MenuDietaEspecial = () => {
       {usuarioEhEscola() && (
         <LeafItem to={`/${DIETA_ESPECIAL}/${CANCELAMENTO}`}>
           Cancel. Dieta Especial
+        </LeafItem>
+      )}
+      {exibeCadastroProtocoloPadrao && (
+        <LeafItem to={`/${DIETA_ESPECIAL}/${CADASTRO_PROTOCOLO_PADRAO}`}>
+          Cadastro de Protocolo Padrão
         </LeafItem>
       )}
     </Menu>

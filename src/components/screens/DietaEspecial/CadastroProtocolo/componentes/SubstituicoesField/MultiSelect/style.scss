@@ -1,0 +1,22 @@
+div.multi-select {
+  .multiselect-wrapper-disabled .dropdown-heading {
+    pointer-events: none;
+    background-color: #e9ecef !important;
+  }
+
+  .multiselect-wrapper-disabled
+    .dropdown
+    .dropdown-heading
+    .dropdown-heading-value
+    span {
+    color: #5d515b !important;
+  }
+
+  .dropdown .dropdown-heading .dropdown-heading-value span {
+    float: left;
+    max-width: 16rem;
+    padding: 0 10px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

@@ -139,6 +139,8 @@ export const DETALHE_DASHBOARD_DRE = "detalhe-dashboard-dre";
 
 export const LANCAMENTO_MEDICAO_INICIAL = "lancamento-medicao-inicial";
 
+export const CADASTRO_PROTOCOLO_PADRAO = "cadastro-protocolo-padrao";
+
 // Status dos pedidos
 
 export const STATUS_DRE_A_VALIDAR = "DRE_A_VALIDAR";

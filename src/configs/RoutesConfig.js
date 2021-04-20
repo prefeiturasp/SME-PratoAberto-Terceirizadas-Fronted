@@ -22,6 +22,7 @@ import ConfigEmailPage from "../pages/Configuracoes/ConfigEmailPage";
 import MensagemPage from "../pages/Configuracoes/MensagemPage";
 import { DietaEspecialAluno } from "../pages/DietaEspecial/DashboardDietaEspecialPage";
 import RelatorioAlunosDietasAtivasInativasPage from "../pages/DietaEspecial/RelatorioAlunosDietasAtivasInativasPage.jsx";
+import CadastroProtocoloPadrao from "../pages/DietaEspecial/CadastroProtocoloPadrao";
 import PainelPedidosAlteracaoDeCardapioDREPage from "../pages/DRE/AlteracaoDeCardapio/PainelPedidosPage";
 import PainelPedidosInclusaoDeAlimentacaoDREPage from "../pages/DRE/InclusaoDeAlimentacao/PainelPedidosPage";
 import PainelPedidosInversaoDiaCardapioDREPage from "../pages/DRE/InversaoDiaCardapio/PainelPedidosPage";
@@ -188,6 +189,12 @@ const routesConfig = [
     component: StatusSolicitacoesAutorizadasEscolaPage,
     exact: false,
     tipoUsuario: usuarioEhEscola()
+  },
+  {
+    path: `/${constants.DIETA_ESPECIAL}/${constants.CADASTRO_PROTOCOLO_PADRAO}`,
+    component: CadastroProtocoloPadrao,
+    exact: false,
+    tipoUsuario: usuarioEhCODAEDietaEspecial()
   },
   {
     path: `/${constants.ESCOLA}/${constants.SOLICITACOES_PENDENTES}`,
@@ -395,9 +402,8 @@ const routesConfig = [
     tipoUsuario: usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.TERCEIRIZADA}/${
-      constants.SOLICITACAO_KIT_LANCHE_UNIFICADA
-    }`,
+    path: `/${constants.TERCEIRIZADA}/${constants.SOLICITACAO_KIT_LANCHE_UNIFICADA
+      }`,
     component: PainelPedidosSolicitacaoUnificadaTerceirizadaPage,
     exact: false,
     tipoUsuario: usuarioEhTerceirizada()
@@ -529,9 +535,8 @@ const routesConfig = [
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.SOLICITACAO_KIT_LANCHE_UNIFICADA}/${
-      constants.RELATORIO
-    }`,
+    path: `/${constants.SOLICITACAO_KIT_LANCHE_UNIFICADA}/${constants.RELATORIO
+      }`,
     component: relatoriosSolicitacaoUnificada(),
     exact: false,
     tipoUsuario: constants.QUALQUER_USUARIO
@@ -567,9 +572,8 @@ const routesConfig = [
       usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${
-      constants.SOLICITACOES_PENDENTES
-    }`,
+    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${constants.SOLICITACOES_PENDENTES
+      }`,
     component: StatusSolicitacoesDietaEspecial(),
     exact: true,
     tipoUsuario:
@@ -581,9 +585,8 @@ const routesConfig = [
       usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${
-      constants.SOLICITACOES_NEGADAS
-    }`,
+    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${constants.SOLICITACOES_NEGADAS
+      }`,
     component: StatusSolicitacoesDietaEspecial(),
     exact: true,
     tipoUsuario:
@@ -595,9 +598,8 @@ const routesConfig = [
       usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${
-      constants.SOLICITACOES_AUTORIZADAS
-    }`,
+    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${constants.SOLICITACOES_AUTORIZADAS
+      }`,
     component: StatusSolicitacoesDietaEspecial(),
     exact: true,
     tipoUsuario:
@@ -609,33 +611,29 @@ const routesConfig = [
       usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${
-      constants.SOLICITACOES_CANCELADAS
-    }`,
+    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${constants.SOLICITACOES_CANCELADAS
+      }`,
     component: StatusSolicitacoesDietaEspecial(),
     exact: true,
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${
-      constants.SOLICITACOES_AUTORIZADAS_TEMPORARIAMENTE
-    }`,
+    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${constants.SOLICITACOES_AUTORIZADAS_TEMPORARIAMENTE
+      }`,
     component: StatusSolicitacoesDietaEspecial(),
     exact: true,
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${
-      constants.SOLICITACOES_INATIVAS
-    }`,
+    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${constants.SOLICITACOES_INATIVAS
+      }`,
     component: StatusSolicitacoesDietaEspecial(),
     exact: true,
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${
-      constants.SOLICITACOES_INATIVAS_TEMPORARIAMENTE
-    }`,
+    path: `/${constants.SOLICITACOES_DIETA_ESPECIAL}/${constants.SOLICITACOES_INATIVAS_TEMPORARIAMENTE
+      }`,
     component: StatusSolicitacoesDietaEspecial(),
     exact: true,
     tipoUsuario: constants.QUALQUER_USUARIO
@@ -665,57 +663,50 @@ const routesConfig = [
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.AVALIAR_RECLAMACAO_PRODUTO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.AVALIAR_RECLAMACAO_PRODUTO
+      }`,
     component: AvaliarReclamacaoProdutoPage,
     exact: true,
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${
-      constants.BUSCA_PRODUTO_ANALISE_SENSORIAL
-    }`,
+    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${constants.BUSCA_PRODUTO_ANALISE_SENSORIAL
+      }`,
     component: BuscaProdutoAnaliseSensorial,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.RELATORIO_ANALISE_SENSORIAL
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.RELATORIO_ANALISE_SENSORIAL
+      }`,
     component: BuscaAvancadaProdutoAnaliseSensorial,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada() || usuarioEhCODAEGestaoProduto()
   },
   {
-    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${
-      constants.RELATORIO_ANALISE_SENSORIAL
-    }`,
+    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${constants.RELATORIO_ANALISE_SENSORIAL
+      }`,
     component: RelatorioAnaliseSensorial,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${
-      constants.RELATORIO_PRODUTO
-    }`,
+    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${constants.RELATORIO_PRODUTO
+      }`,
     component: RelatorioProduto,
     exact: true,
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.RELATORIO_SITUACAO_PRODUTO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.RELATORIO_SITUACAO_PRODUTO
+      }`,
     component: RelatorioSituacaoProduto,
     exact: true,
     tipoUsuario: constants.QUALQUER_USUARIO
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.RELATORIO_RECLAMACAO_PRODUTO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.RELATORIO_RECLAMACAO_PRODUTO
+      }`,
     component: RelatorioReclamacaoProduto,
     exact: true,
     tipoUsuario:
@@ -726,9 +717,8 @@ const routesConfig = [
       usuarioEhEscola()
   },
   {
-    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${
-      constants.HOMOLOGACAO_PRODUTO
-    }`,
+    path: `/${constants.PESQUISA_DESENVOLVIMENTO}/${constants.HOMOLOGACAO_PRODUTO
+      }`,
     component: HomologacaoProdutoPage,
     exact: true,
     tipoUsuario: usuarioEhCODAEGestaoProduto()
@@ -746,9 +736,8 @@ const routesConfig = [
       usuarioEhEscola()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.RECLAMACAO_DE_PRODUTO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.RECLAMACAO_DE_PRODUTO
+      }`,
     component: StatusSolicitacoesGestaoProduto.ReclamacaoDeProduto,
     exact: true,
     tipoUsuario:
@@ -760,9 +749,8 @@ const routesConfig = [
       usuarioEhEscola()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.PRODUTOS_SUSPENSOS
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.PRODUTOS_SUSPENSOS
+      }`,
     component: StatusSolicitacoesGestaoProduto.ProdutosSuspensos,
     exact: true,
     tipoUsuario:
@@ -774,44 +762,39 @@ const routesConfig = [
       usuarioEhEscola()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.CORRECAO_DE_PRODUTO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.CORRECAO_DE_PRODUTO
+      }`,
     component: StatusSolicitacoesGestaoProduto.CorrecaoDeProduto,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada() || usuarioEhCODAEGestaoProduto()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
-        .AGUARDANDO_ANALISE_RECLAMACAO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
+      .AGUARDANDO_ANALISE_RECLAMACAO
+      }`,
     component: StatusSolicitacoesGestaoProduto.AguardandoAnaliseReclamacao,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada() || usuarioEhCODAEGestaoProduto()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
-        .AGUARDANDO_ANALISE_SENSORIAL
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
+      .AGUARDANDO_ANALISE_SENSORIAL
+      }`,
     component: StatusSolicitacoesGestaoProduto.AguardandoAnaliseSensorial,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada() || usuarioEhCODAEGestaoProduto()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
-        .SOLICITACOES_PENDENTE_HOMOLOGACAO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
+      .SOLICITACOES_PENDENTE_HOMOLOGACAO
+      }`,
     component: StatusSolicitacoesGestaoProduto.PendenteHomologacao,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada() || usuarioEhCODAEGestaoProduto()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.SOLICITACOES_HOMOLOGADAS
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO.SOLICITACOES_HOMOLOGADAS
+      }`,
     component: StatusSolicitacoesGestaoProduto.Homologados,
     exact: true,
     tipoUsuario:
@@ -823,10 +806,9 @@ const routesConfig = [
       usuarioEhEscola()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
-        .SOLICITACOES_NAO_HOMOLOGADAS
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ROTAS_SOLICITACOES_HOMOLOGACAO_PRODUTO
+      .SOLICITACOES_NAO_HOMOLOGADAS
+      }`,
     component: StatusSolicitacoesGestaoProduto.NaoHomologados,
     exact: true,
     tipoUsuario:
@@ -870,17 +852,15 @@ const routesConfig = [
       usuarioEhEscola()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ATIVACAO_DE_PRODUTO
-    }/consulta`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ATIVACAO_DE_PRODUTO
+      }/consulta`,
     component: ConsultaAtivacaoDeProdutoPage,
     exact: true,
     tipoUsuario: usuarioEhCODAEGestaoProduto
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ATIVACAO_DE_PRODUTO
-    }/detalhe`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ATIVACAO_DE_PRODUTO
+      }/detalhe`,
     component: AtivacaoDeProdutoPage,
     exact: true,
     tipoUsuario: usuarioEhCODAEGestaoProduto
@@ -908,49 +888,43 @@ const routesConfig = [
     tipoUsuario: usuarioEhTerceirizada()
   },
   {
-    path: `/${
-      constants.GESTAO_PRODUTO
-    }/relatorios/quantitativo-por-terceirizada`,
+    path: `/${constants.GESTAO_PRODUTO
+      }/relatorios/quantitativo-por-terceirizada`,
     component: RelatorioQuantitativoPorTerceirizadaPage,
     exact: true,
     tipoUsuario: usuarioEhCODAEGestaoProduto()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.AVALIAR_SOLICITACAO_CADASTRO_PRODUTO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.AVALIAR_SOLICITACAO_CADASTRO_PRODUTO
+      }`,
     component: AvaliarSolicitacaoCadastroProdutoPage,
     exact: true,
     tipoUsuario: usuarioEhTerceirizada()
   },
   {
-    path: `/${constants.GESTAO_PRODUTO}/${
-      constants.ACOMPANHAR_SOLICITACAO_CADASTRO_PRODUTO
-    }`,
+    path: `/${constants.GESTAO_PRODUTO}/${constants.ACOMPANHAR_SOLICITACAO_CADASTRO_PRODUTO
+      }`,
     component: AcompanharSolicitacaoCadastroProdutoPage,
     exact: true,
     tipoUsuario: usuarioEhCODAEDietaEspecial()
   },
   {
-    path: `/${constants.DIETA_ESPECIAL}/${
-      constants.RELATORIO_QUANTITATIVO_SOLIC_DIETA_ESP
-    }`,
+    path: `/${constants.DIETA_ESPECIAL}/${constants.RELATORIO_QUANTITATIVO_SOLIC_DIETA_ESP
+      }`,
     component: RelatorioQuantitativoSolicDietaEspPage,
     exact: true,
     tipoUsuario: podeAcessarRelatorioQuantSolicDietaEsp
   },
   {
-    path: `/${constants.DIETA_ESPECIAL}/${
-      constants.RELATORIO_QUANTITATIVO_CLASSIFICACAO_DIETA_ESP
-    }`,
+    path: `/${constants.DIETA_ESPECIAL}/${constants.RELATORIO_QUANTITATIVO_CLASSIFICACAO_DIETA_ESP
+      }`,
     component: RelatorioQuantitativoClassificacaoDietaEspPage,
     exact: true,
     tipoUsuario: podeAcessarRelatorioQuantSolicDietaEsp
   },
   {
-    path: `/${constants.DIETA_ESPECIAL}/${
-      constants.RELATORIO_QUANTITATIVO_DIAG_DIETA_ESP
-    }`,
+    path: `/${constants.DIETA_ESPECIAL}/${constants.RELATORIO_QUANTITATIVO_DIAG_DIETA_ESP
+      }`,
     component: RelatorioQuantitativoDiagDietaEspPage,
     exact: true,
     tipoUsuario: podeAcessarRelatorioQuantSolicDietaEsp
@@ -966,17 +940,15 @@ const routesConfig = [
       usuarioEhEscola()
   },
   {
-    path: `/${constants.LANCAMENTO_INICIAL}/${
-      constants.LANCAMENTO_MEDICAO_INICIAL
-    }`,
+    path: `/${constants.LANCAMENTO_INICIAL}/${constants.LANCAMENTO_MEDICAO_INICIAL
+      }`,
     component: LancamentoMedicaoInicialPage,
     exact: true,
     tipoUsuario: usuarioEhEscola()
   },
   {
-    path: `/${constants.LOGISTICA}/${
-      constants.DISPONIBILIZACAO_DE_SOLICITACOES
-    }`,
+    path: `/${constants.LOGISTICA}/${constants.DISPONIBILIZACAO_DE_SOLICITACOES
+      }`,
     component: DisponibilizacaoDeSolicitacoesPage,
     exact: true,
     tipoUsuario: usuarioEhLogistica()
@@ -988,9 +960,8 @@ const routesConfig = [
     tipoUsuario: usuarioEhLogistica()
   },
   {
-    path: `/${constants.LOGISTICA}/${
-      constants.ENVIO_REQUISICOES_ENTREGA_AVANCADO
-    }`,
+    path: `/${constants.LOGISTICA}/${constants.ENVIO_REQUISICOES_ENTREGA_AVANCADO
+      }`,
     component: ConsultaRequisicaoEntregaDilog,
     exact: true,
     tipoUsuario: usuarioEhLogistica()

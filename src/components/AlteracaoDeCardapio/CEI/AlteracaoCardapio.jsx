@@ -250,7 +250,7 @@ class AlteracaoCardapio extends Component {
           );
         }
       },
-      function() {
+      function () {
         toastError("Houve um erro ao enviar a Alteração de Cardápio");
       }
     );
@@ -682,12 +682,12 @@ const AlteracaoCardapioForm = reduxForm({
             };
             errors[periodo] = errors[periodo]
               ? {
-                  faixas_etarias: Object.assign(
-                    {},
-                    errors[periodo].faixas_etarias,
-                    erroCampo
-                  )
-                }
+                faixas_etarias: Object.assign(
+                  {},
+                  errors[periodo].faixas_etarias,
+                  erroCampo
+                )
+              }
               : { faixas_etarias: erroCampo };
           }
         }

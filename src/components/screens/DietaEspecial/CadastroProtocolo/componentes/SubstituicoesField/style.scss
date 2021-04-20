@@ -1,0 +1,14 @@
+.substituicoes-field {
+  .col-botoes {
+    display: flex;
+    justify-content: space-evenly;
+  }
+}
+
+.select-produto > .ant-form-item {
+  margin-bottom: 0 !important;
+}
+
+.select-produto .ant-form-item-control {
+  line-height: 0 !important;
+}
